@@ -1,5 +1,5 @@
-# Cross-Kernel Margins: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise
-This repository holds the code for the three independent but connected numerical experiments presented in the paper entitled "Cross-Kernel Margins: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise", which can be found at [arXiv.org](https://arxiv.org/pdf/2601.23084).
+# The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise
+This repository holds the code for the three independent but connected numerical experiments presented in the paper entitled "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise", which can be found at [arXiv.org](https://arxiv.org/pdf/2601.23084).
 ## Description - Folder Structure
 ### 1. _experiments_ Folder
 `margin_generalisation_link.py` - This script contains code which explores the relationship between margins and generalisation by corrupting the labels of the training data in an ideal (noiseless) setting. 
