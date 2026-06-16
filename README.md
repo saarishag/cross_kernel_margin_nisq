@@ -5,7 +5,7 @@ This repository holds the code for the three independent but connected numerical
 `margin_generalisation_link.py` - This script contains code which explores the relationship between margins and generalisation by corrupting the labels of the training data in an ideal (noiseless) setting. 
 *(This script can be used to reproduce Figures 4,5 and 6 of the paper.)*
 
-`local_vs_global.py` - This script explores the difference in test accuracy achieved on a dataset when using the local depolarising noise model compared to the global noise model. This comparison is made possible by first matching the survival probabilities of both models. 
+`local_vs_global.py` - This script explores the test accuracy achieved on a dataset when using the local depolarising noise model compared to the global noise model. This comparison is made possible by first matching the survival probabilities of both models. 
 *(This script can be used to reproduce Figure 10 of the paper.)*
 
 `margin_bounds.py` - This script verifies the upper and lower margin bounds derived in the paper. It compares the theoretical bound value of the margin affected by (local depolarising) noise with the actual margin value. 
@@ -13,8 +13,10 @@ This repository holds the code for the three independent but connected numerical
 
 `C_region_test.py` - This script determines a feasible range for the acceptable values for the regularisation parameter that must be used in `margin_bounds.py` for valid upper bounds.
 
+`C_min_LB_test.py` - This script determines the acceptable minimum value for the regularisation parameter that must be used in `margin_bounds.py` for valid lower bounds.
+
 `ibm_margin_bounds.py` - This script verifies the margin bounds on real quantum hardware.
-*(This script can be used to reproduce Figure 13 of the paper.)*
+*(This script can be used to reproduce Figure 14 of the paper.)*
 
 ### 2. _src_ Folder
 `dataset_config.py`- This script contains code to fetch and preprocess the datasets used in the paper, and prepare them for use for the binary classification problem.
@@ -33,12 +35,18 @@ This repository holds the code for the three independent but connected numerical
 `results.py` - This script contains the actual numeric results which can be used with `plotting_fns.py` to reproduce the exact plots from the paper.
 
 ### 4. _data_ Folder
-This folder contains the `.csv` files necessary to reproduce the figure from the paper depicting boxplots of the median geometric margin with increasingly higher fractions of corrupted training labels.
+This folder contains the `.csv` files necessary to reproduce the figure from the paper depicting boxplots of the median cross-label margin with increasingly higher fractions of corrupted training labels.
 
 ### 5. _hardware\_metadata_ Folder
-`ibm_fez_calibrations_2026-01-30T12_25_55Z.csv` - This file contains the calibration data for all qubits associated with `ibm_fez` at the date and time of access.
+`ibm_fez_calibrations_2026-01-30T12_25_55Z.csv` - This file contains the calibration data for all qubits associated with `ibm_fez` at the date and time of access for the hardware experiment associated with the 20 sample subset of the breast cancer dataset.
 
-`ibm_job_metadata.json` - This file includes metadata, such as the job_id, associated with the experiment conducted on real hardware for reproducibility.
+`ibm_fez_calibrations_2026-05-12T12_45_44Z.csv` - This file contains the calibration data for all qubits associated with `ibm_fez` at the date and time of access for the hardware experiments associated with the second subset of the breast cancer dataset and the subset of the gaussian dataset.
+
+`ibm_BC220_job_metadata.json` - This file includes metadata, such as the job_id, associated with the experiment conducted with the 20 sample subset of the breast cancer dataset on real hardware for reproducibility.
+
+`ibm_BC45_job_metadata.json` - This file includes metadata, such as the job_id, associated with the experiment conducted with the 45 sample subset of the breast cancer dataset on real hardware for reproducibility.
+
+`ibm_Gaus_job_metadata.json` - This file includes metadata, such as the job_id, associated with the experiment conducted with the subset of the gaussian dataset on real hardware for reproducibility.
 
 ## Dependencies 
 The following dependencies must be installed to run these scripts:
@@ -59,7 +67,7 @@ The three independent simulations with their related code scripts include:
 - exploring the link between margins and generalisation using corrupted labels
   - `gen_margin_definitions.py`
   - `margin_generalisation_link.py` 
-- investigating the difference between local and global depolarising noise using test accuracy
+- comparing local and global depolarising noise using test accuracy
   - `kernel_definitions.py`
   - `local_vs_global.py`
 - verifying the upper and lower margin bounds
