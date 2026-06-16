@@ -1,5 +1,9 @@
 # The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise
-This repository holds the code for the three independent but connected numerical experiments presented in the paper entitled "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise", which can be found at [arXiv.org](https://arxiv.org/pdf/2601.23084).
+This repository holds the code for the three independent but connected numerical experiments presented in the paper entitled "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise", which can be found at [arXiv.org](https://arxiv.org/pdf/2601.23084)
+
+(previously released on arXiv as
+"Margin-Based Generalisation Bounds for Quantum Kernel Methods under Local Depolarising Noise").
+
 ## Description - Folder Structure
 ### 1. _experiments_ Folder
 `margin_generalisation_link.py` - This script contains code which explores the relationship between margins and generalisation by corrupting the labels of the training data in an ideal (noiseless) setting. 
@@ -8,10 +12,10 @@ This repository holds the code for the three independent but connected numerical
 `local_vs_global.py` - This script explores the test accuracy achieved on a dataset when using the local depolarising noise model compared to the global noise model. This comparison is made possible by first matching the survival probabilities of both models. 
 *(This script can be used to reproduce Figure 10 of the paper.)*
 
-`margin_bounds.py` - This script verifies the upper and lower margin bounds derived in the paper. It compares the theoretical bound value of the margin affected by (local depolarising) noise with the actual margin value. 
+`margin_bounds.py` - This script verifies the upper and lower margin bounds derived in the paper. It compares the theoretical bound value of the margin affected by (local depolarising) noise with the _cross-kernel margin_, which is a margin-based robustness measure introduced in the paper.
 *(This script can be used to reproduce Figures 11 and 12 of the paper.)* 
 
-`C_region_test.py` - This script determines a feasible range for the acceptable values for the regularisation parameter that must be used in `margin_bounds.py` for valid upper bounds.
+`C_region_test.py` - This script determines a feasible range of acceptable values for the regularisation parameter that must be used in `margin_bounds.py` for valid upper bounds.
 
 `C_min_LB_test.py` - This script determines the acceptable minimum value for the regularisation parameter that must be used in `margin_bounds.py` for valid lower bounds.
 
@@ -35,7 +39,7 @@ This repository holds the code for the three independent but connected numerical
 `results.py` - This script contains the actual numeric results which can be used with `plotting_fns.py` to reproduce the exact plots from the paper.
 
 ### 4. _data_ Folder
-This folder contains the `.csv` files necessary to reproduce the figure from the paper depicting boxplots of the median cross-label margin with increasingly higher fractions of corrupted training labels.
+This folder contains the `.csv` files necessary to reproduce the figure from the paper depicting boxplots of the cross-label margin distribution for different fractions of corrupted training labels.
 
 ### 5. _hardware\_metadata_ Folder
 `ibm_fez_calibrations_2026-01-30T12_25_55Z.csv` - This file contains the calibration data for all qubits associated with `ibm_fez` at the date and time of access for the hardware experiment associated with the 20 sample subset of the breast cancer dataset.
@@ -72,7 +76,7 @@ The three independent simulations with their related code scripts include:
   - `local_vs_global.py`
 - verifying the upper and lower margin bounds
   - `kernel_definitions.py`, `bounds_definitions.py`, `ibm_bounds_definitions.py`
-  - `C_region_test.py`, `margin_bounds.py`, `ibm_margin_bounds.py`
+  - `C_region_test.py`, `C_min_LB_test.py`, `margin_bounds.py`, `ibm_margin_bounds.py`
 ### Steps:
 1. Clone this repository
 2. Install the dependencies
