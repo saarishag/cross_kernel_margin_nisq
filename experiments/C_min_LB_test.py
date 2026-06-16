@@ -8,7 +8,7 @@ from sklearn.pipeline import make_pipeline
 
 from src.kernel_definitions import clean_rho_fn, get_clean_matrix, local_rho_fn, get_local_matrix
 from src.dataset_config import define_wine_dataset, define_heart_dataset, define_BC_dataset, define_gaussian_dataset
-from src.bounds_definitions import calc_margin, calc_C_bounds 
+from src.bounds_definitions import calc_margin, calc_C_min_LB 
 
 np.random.seed(42)
 
@@ -19,7 +19,7 @@ X_train, X_val, y_train, y_val = train_test_split(
             X_subset, 
             y_subset, 
             test_size = 0.25, 
-            random_state=42) #to maintain class balance 
+            random_state=42)
 
 #Initialise pipeline
 preprocessor = make_pipeline(
@@ -72,9 +72,10 @@ svm_clean_ideal = SVC(kernel = "precomputed", C=best_C).fit(clean_K,y_train)
 clean_margin = calc_margin(svm_clean_ideal, clean_K, y_train)
 
 C_min_estimate = []
-C_max_bounds = []
+margin_estimate = []
+noisy_margin_valid = []
 
-#Computing the range of C values allowed for all p_local on list
+#Computing the minimum C value allowed for all p_local on list
 for p_local in p_local_list:
         
     #Compute noisy margin estimate using validation set
@@ -92,48 +93,39 @@ for p_local in p_local_list:
     print(f"Noisy Estimate = {noisy_margin_val}")
     print(f"Noisy Margin = {noisy_margin}")
         
-    C_min_est, C_max = calc_C_bounds(p_local, clean_margin, noisy_margin_val, n, n_layers)
+    C_min_est = calc_C_min_LB(p_local, clean_margin, noisy_margin_val, n, n_layers)
     
     #Since C >= 0, set any negative C_min_est values to 0
     if C_min_est < 0: C_min_est = 0  
 
     C_min_estimate.append(C_min_est)
-    C_max_bounds.append(C_max)
+    margin_estimate.append(noisy_margin_val)
+    noisy_margin_valid.append(noisy_margin)
     
-for C_min_est, C_max in zip(C_min_estimate, C_max_bounds):
-    print(f"{C_min_est}, {C_max}")
+for C_min_est in C_min_estimate:
+    print(f"{C_min_est}")
 
-#Find feasible region
-C_low = C_min_estimate[0]
-C_high = C_max_bounds[0]
-
-for C_min_est, C_max in zip(C_min_estimate, C_max_bounds):
-    if C_min_est > C_low: C_low = C_min_est
-    if C_max < C_high: C_high = C_max
-
-if C_low <= C_high:
-    print(f"[{C_low},{C_high}]")
-else:
-    print("No feasible interval")
-
+print(f"Minimum C = {np.max(C_min_estimate)}")
 
 #Save results to a text file
-filename = "CminTest_Heart.txt"
+filename = "CminTest_Heart_LB.txt"
     
 with open(filename, 'a') as file:
     file.write("---------------------------------------------------------------------------\n")
     file.write(f"m={num_samples}, n={n}, n_layers={n_layers}\n")
     file.write(f"Best C from CV: C = {best_C}\n")
     file.write(f"Clean Margin: {clean_margin} \n")
-    file.write(f"p_local: [Cmin_estimate, C_max] \n")
+    file.write(f"p_local: Cmin_estimate \n")
 
-    for p_local, C_min_est, C_max in zip(p_local_list, C_min_estimate, C_max_bounds):
-        file.write(f"{p_local}: [{C_min_est}, {C_max}]\n")
+    for p_local, C_min_est in zip(p_local_list, C_min_estimate):
+        file.write(f"{p_local}: {C_min_est}\n")
+    
+    file.write(f"Estimated Cmin value: {np.max(C_min_estimate)}\n")
 
-    if C_low <= C_high:
-        file.write(f"[{C_low},{C_high}]\n")
-    else:
-        file.write("No feasible interval \n")
+    file.write(f"p_local, estimate, margin: \n")
+    for p_local, estimate, margin in zip(p_local_list, margin_estimate,noisy_margin_valid):
+        file.write(f"{p_local}: {estimate}, {margin} \n")
+
 
 with open(filename, 'r') as file:
     content = file.read()

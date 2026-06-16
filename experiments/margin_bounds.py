@@ -5,9 +5,10 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
+
 from src.kernel_definitions import clean_rho_fn, get_clean_matrix, local_rho_fn, get_local_matrix
 from src.dataset_config import define_wine_dataset, define_heart_dataset, define_BC_dataset, define_gaussian_dataset
-from src.bounds_definitions import calc_margin, get_upper_params, calc_upper_bound, get_p_local_vals, calc_lower_bound 
+from src.bounds_definitions import calc_margin, get_upper_params, get_lower_params, calc_upper_bound, calc_lower_bound 
 from results.results import margin_results, upper_bound_results, lower_bound_results
 from src.plotting_fns import plot_upper_bound, plot_lower_bound
 np.random.seed(42)
@@ -44,14 +45,16 @@ num_samples = len(X_train)
 y_train = np.array(y_train_scaled).ravel()
 y_test = np.array(y_test_scaled).ravel()
 
+
+"""
+Upper Bound Computation
+"""
+
 #Get parameters obtained from running C_region_test.py script
 C0, C_bound, clean_margin = get_upper_params() 
 print(f"C_bound = {C_bound}")
 print(f"C0 = {C0}")
 print(f"Clean Margin = {clean_margin}") #Retrieve margin computed in C_region_test.py script #For consistency/valid bounds
-
-#Redefine p_local_list if necessary
-p_local_list = [0, 0.05, 0.1, 0.25, 0.375, 0.5, 0.75] 
 
 #Get the ideal kernel matrix
 clean_rho = clean_rho_fn(n=n, n_layers=n_layers, embedding=embedding)
@@ -83,7 +86,7 @@ for p_local in p_local_list:
         print("Bound Violated")
 
 #Save results to text file
-filename = "Heart_MarginBounds.txt"
+filename = "Heart_UpperBound.txt"
 
 with open(filename, 'a') as file:
     file.write(f"Upper Bounds\n")
@@ -108,7 +111,7 @@ with open(filename, 'r') as file: #read
 #Uncomment to duplicate plots from the paper 
  
 p_local_list, heart_margin, gaus_margin, bc_margin, wineL1_margin, wineL2_margin = margin_results()
-p_local_list, heart_upper, gaus_upper, bc_upper, wineL1_upper, wineL2_upper = upper_bound_results()
+p_local_list, heart_upper, gaus_upper, bc_upper, wineL1_upper, wineL2_upper = upper_bound_results(heart_margin, gaus_margin, bc_margin, wineL1_margin, wineL2_margin)
 
 plot_upper_bound(p_local_list,heart_margin, heart_upper, gaus_margin, gaus_upper, bc_margin, bc_upper, wineL1_margin, wineL1_upper, wineL2_margin, wineL2_upper)
 """
@@ -118,11 +121,15 @@ plot_upper_bound(p_local_list,heart_margin, heart_upper, gaus_margin, gaus_upper
 Lower Bound Computation
 """
 
-#Define acceptable p_local values according to conditions for non-trivial bounds
-p_local_list = get_p_local_vals(n, clean_margin, C_bound)
+#Get parameters obtained from running C_region_test.py script
+C0, C_bound, clean_margin = get_lower_params()
+print(f"C_bound = {C_bound}")
+print(f"C0 = {C0}")
+print(f"Clean Margin = {clean_margin}") #Retrieve margin computed in C_region_test.py script #For consistency/valid bounds
 
 noisy_margin_lower = []
 lower_bound_arr = []
+
 for p_local in p_local_list:
 
     local_rho = local_rho_fn(p_local, n, n_layers, embedding)
@@ -138,7 +145,6 @@ for p_local in p_local_list:
 
     noisy_margin_lower.append(noisy_margin)
     lower_bound_arr.append(lower_bound)
-    
     
     if (noisy_margin >= lower_bound):
         print("Lower Bound")
@@ -168,7 +174,7 @@ with open(filename, 'r') as file: #read
 #Uncomment to duplicate plots from the paper 
  
 p_local_list, heart_margin, gaus_margin, bc_margin, wineL1_margin, wineL2_margin = margin_results()
-p_local_list, heart_lower, gaus_lower, bc_lower, wineL1_lower, wineL2_lower = lower_bound_results()
+p_local_list, heart_lower, gaus_lower, bc_lower, wineL1_lower, wineL2_lower = lower_bound_results(heart_margin, gaus_margin, bc_margin, wineL1_margin, wineL2_margin)
 
 plot_lower_bound(p_local_list,heart_margin, heart_lower, gaus_margin, gaus_lower, bc_margin, bc_lower, wineL1_margin, wineL1_lower, wineL2_margin, wineL2_lower)
 """

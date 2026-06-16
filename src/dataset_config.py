@@ -129,3 +129,31 @@ def define_BC_dataset(start, stop):
     return X_subset, y_subset, n, n_layers, embedding, p_local_list
 
 
+def define_HTRU2_dataset():
+    
+    n=2 #can be changed 
+    n_layers = 1
+    embedding = IQPEmbedding
+
+    p_local_list = [0, 0.05, 0.1, 0.25, 0.375, 0.5, 0.75] #p_values used for C range test
+        
+    #Load the dataset
+    url = "HTRU_2.csv"
+    htru2 = pd.read_csv(url, header = None)
+
+        #display first few rows
+    print(htru2.head())
+
+
+    X = htru2.iloc[:, :-1] #all col except last
+    y = htru2.iloc[:,-1]
+
+
+    X_subset = X.values[:250]
+    y_subset = y.values[:250]
+
+    print(X_subset.shape)
+    print(y_subset.shape)
+
+    return X_subset, y_subset, n, n_layers, embedding, p_local_list
+

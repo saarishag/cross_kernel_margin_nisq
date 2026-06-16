@@ -9,16 +9,22 @@ from sklearn.svm import SVC
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from qiskit_ibm_runtime import QiskitRuntimeService, Session, SamplerV2 as Sampler
 
+#Uncomment to run FakeFez simulations
+#from qiskit_ibm_runtime.fake_provider import FakeFez
+#from qiskit_aer import AerSimulator
+#from qiskit_aer.noise import NoiseModel
+#from qiskit_aer.primitives import SamplerV2
+
 from ibm_bounds_definitions import create_iqp_feature_map, create_training_overlap_circuit_list, create_testing_overlap_circuit_list, compute_overlap_matrix
-from src.dataset_config import define_BC_dataset
+from src.dataset_config import define_BC_dataset, define_gaussian_dataset
 from src.bounds_definitions import calc_margin
-from results.results import ideal_kernel_BC, ibm_results, upper_lower_bounds_BC
+from results.results import ideal_kernels_IBM, ibm_results
 from src.plotting_fns import ibm_plots
 
 np.random.seed(42)
 
 #get a subset of 20 samples from BC dataset
-X_subset, y_subset, n, n_layers, _, _ = define_BC_dataset(start = 200, stop=220) 
+X_subset, y_subset, n, n_layers, _, _ = define_BC_dataset(start = 200, stop=220) #Example usage
 
 #Split first then do preprocessing on train sets
 X_train_val, X_test, y_train_val, y_test = train_test_split(
@@ -73,6 +79,16 @@ backend = service.backend("ibm_fez")
 # Running on a real hardware
 sampler = Sampler(mode=backend)
 
+"""
+#Comment the above 3 lines of code and 
+#Uncomment below code to run FakeFez simulations
+backend = FakeFez()
+
+noise_model = NoiseModel.from_backend(backend)
+
+simulator = AerSimulator(noise_model = noise_model)
+"""
+
 # Create the circuits for training and testing overlaps
 training_overlap_circ_list = create_training_overlap_circuit_list(train_size, X_train, fm)
 
@@ -111,17 +127,20 @@ qml_score_precomputed_kernel = qml_svc.score(test_matrix, y_test)
 print(f"Precomputed kernel classification test score: {qml_score_precomputed_kernel}")
 
 #separately compute the ideal kernel for margin computation on the hardware using get_clean_matrix fn from margin_bounds.py
-clean_kernel = ideal_kernel_BC() 
+#the same clean kernel will be used for the fake and real experiments
+
+clean_K_bc220,_,_ = ideal_kernels_IBM()  #Example usage - clean_K_bc220 
 
 #Compute the noisy margin using the svm from the hardware and the ideal clean kernel
-noisy_margin = calc_margin(qml_svc, clean_kernel, y_train)
+noisy_margin = calc_margin(qml_svc, clean_K_bc220, y_train)
 
 """
-#Uncomment the following code to get the pre-computed clean kernel matrix and resulting noisy margin
-ibm_margin = ibm_results()
+#Uncomment the following code to get the pre-computed clean kernel matrices and resulting noisy margins 
+clean_K_bc220, clean_K_bc45, clean_K_gaus = ideal_kernels_IBM()
+p_local_list, _, _, _, _, IBM_margin_bc220,_, _, _, _, IBM_margin_bc45,_, _, _, _, IBM_margin_gaus  = ibm_results()
 
 ##################################################################
-#Upper Bound for BC dataset (Simulated - for comparison)
+#Upper Bound for BC dataset (Simulated - for comparison) - Example usage
 
 #Results from C_region_test.py:
 
@@ -129,10 +148,11 @@ ibm_margin = ibm_results()
 #C0 = 1000 for consistency and C_bound=C0/(m**3) for valid bounds
 #and clean_margin = 0.1723813313166903 
 
-#Use the above in margin_bounds.py
+#Use the above in margin_bounds.py (and similarly for Lower Bound)
+####################################################################
 
 #Uncomment the following code to duplicate plots from the paper
 
-p_local_list_upper, noisy_margin_upper, upper_bound_arr, p_local_list_lower, noisy_margin_lower, lower_bound_arr = upper_lower_bounds_BC()
-ibm_plots(p_local_list_upper, noisy_margin_upper, upper_bound_arr, p_local_list_lower, noisy_margin_lower, lower_bound_arr, ibm_margin)
+p_local_list, margin_bc220, upper_bound_bc220, lower_bound_bc220, fake_margin_bc220, IBM_margin_bc220,margin_bc45, upper_bound_bc45, lower_bound_bc45, fake_margin_bc45, IBM_margin_bc45,margin_gaus, upper_bound_gaus, lower_bound_gaus, fake_margin_gaus, IBM_margin_gaus = ibm_results()
+ibm_plots(p_local_list, margin_bc220, upper_bound_bc220, lower_bound_bc220, fake_margin_bc220, IBM_margin_bc220,margin_bc45, upper_bound_bc45, lower_bound_bc45, fake_margin_bc45, IBM_margin_bc45,margin_gaus, upper_bound_gaus, lower_bound_gaus, fake_margin_gaus, IBM_margin_gaus)
 """

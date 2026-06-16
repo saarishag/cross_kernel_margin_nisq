@@ -12,7 +12,7 @@ from src.kernel_definitions import clean_rho_fn, get_clean_matrix
 from src.dataset_config import define_wine_dataset, define_heart_dataset, define_BC_dataset, define_gaussian_dataset
 from results.results import boxplot_results, acc_margin_results
 from src.plotting_fns import plot_boxplots, dual_plot, acc_margin_plot
-from src.gen_margin_definitions import per_sample_margin, corrupt_labels
+from src.gen_margin_definitions import per_sample_cross_margin, corrupt_labels
 
 np.random.seed(42)
 
@@ -29,7 +29,7 @@ C0 = 1 #Use default value
 
 corruption_levels = [0.0, 0.10, 0.25, 0.5, 0.6, 0.75, 1.0]
 
-geometric_margins = []
+cross_margins = []
 all_corruption_levels = []
 mean_accuracies = []
 std_accuracies = []
@@ -73,11 +73,11 @@ for corrupt_lvl in corruption_levels:
         #Train SVM with corrupted labels 
         svm = SVC(kernel="precomputed", C=C0).fit(K_train, y_corrupted)
             
-        #Calculate and store (per-sample) geometric margins
-        geom_margin = per_sample_margin(svm, K_train, y_train)
+        #Calculate and store (per-sample) cross-label margins
+        cross_margins = per_sample_cross_margin(svm, K_train, y_train, y_corrupted)
             
-        for geom in zip(geom_margin):
-            geometric_margins.append(geom)
+        for cross in zip(cross_margins):
+            cross_margins.append(cross)
             all_corruption_levels.append(corrupt_lvl)
 
         #Calculate test accuracy
@@ -93,16 +93,16 @@ for corrupt_lvl in corruption_levels:
 df = pd.DataFrame(
     {
         'corruption_levels': all_corruption_levels,
-        'geometric_margin': geometric_margins
+        'cross_margin': cross_margins
     }
 ) 
 
 df['corruption_levels'] = df['corruption_levels'].astype(str)
-df.to_csv("GeomMargins_Heart.csv", index=False)
+df.to_csv("CrossKernelMargins_Heart.csv", index=False)
 
 
 #Save accuracy results to a text file
-filename = "CorruptedLabelsAcc_Heart.txt"
+filename = "CrossK_CorruptedLabelsAcc_Heart.txt"
     
 with open(filename, 'a') as file:
     for corr_level, mean_acc, std_acc in zip(corruption_levels, mean_accuracies, std_accuracies):
@@ -116,12 +116,12 @@ with open(filename, 'r') as file:
 """
 #Uncomment to duplicate plots from the paper
 
-htru2_df, wine_df, heart_df, gaus_df = boxplot_results()
+htru2_df, wine_df, heart_df, gaus_df = boxplot_results() #margins for 3 corruption levels only
 plot_boxplots(htru2_df, wine_df, heart_df, gaus_df)
 
-htru2_acc, htru2_std, htru2_geom_margin, wine_acc, wine_std, wine_geom_margin, heart_acc, heart_std, heart_geom_margin, gaus_acc, gaus_std, gaus_geom_margin = acc_margin_results(htru2_df, wine_df, heart_df, gaus_df)
-dual_plot(htru2_acc, htru2_std, htru2_geom_margin, wine_acc, wine_std, wine_geom_margin, heart_acc, heart_std, heart_geom_margin, gaus_acc, gaus_std, gaus_geom_margin)
+htru2_df, wine_df, heart_df, gaus_df = dual_plot_results() #margins for all corruption levels
+htru2_acc, htru2_std, htru2_med_margins, wine_acc, wine_std, wine_med_margins, heart_acc, heart_std, heart_med_margins, gaus_acc, gaus_std, gaus_med_margins = acc_margin_results(htru2_df, wine_df, heart_df, gaus_df)
+dual_plot(htru2_acc, htru2_std, htru2_med_margins, wine_acc, wine_std, wine_med_margins, heart_acc, heart_std, heart_med_margins, gaus_acc, gaus_std, gaus_med_margins)
 
-acc_margin_plot(htru2_acc, htru2_geom_margin, wine_acc, wine_geom_margin, heart_acc, heart_geom_margin, gaus_acc, gaus_geom_margin)
-
+acc_margin_plot(htru2_acc, htru2_med_margins, wine_acc, wine_med_margins, heart_acc, heart_med_margins, gaus_acc, gaus_med_margins)
 """

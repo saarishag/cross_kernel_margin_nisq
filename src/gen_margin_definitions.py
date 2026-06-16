@@ -1,26 +1,31 @@
 import numpy as np
 
-def per_sample_margin(svm, K_train, y_train):
+
+def per_sample_cross_margin(svm, K_train, y_train, y_corrupted):
     """
-    Compute the geometric margin for each sample in the dataset
+    Compute the cross-kernel margin for each sample in the dataset
     by first obtaining the functional margin and 
     dividing that by the norm of the weight vector
+    (Defined analogously to the geometric margin)
+
+    Get the cross-kernel margin by retrieving the uncorrupted kernel and calc with the corrupted solution
     """
     alpha_y = svm.dual_coef_[0] #shape (1, n_support_vectors)
 
     support_indices = svm.support_ #indices of support vectors
-    y_support_vec = y_train[support_indices] #+1/-1 (labels) of the support vectors
+    y_support_vec = y_corrupted[support_indices] #+1/-1 (labels) of the support vectors
     alpha = alpha_y/y_support_vec 
 
     K_sv = K_train[np.ix_(support_indices, support_indices)]
     Y = np.diag(y_support_vec)
-    sq_weighted_norm = alpha.T @ Y @ K_sv @ Y @ alpha
+    sq_weighted_norm = alpha.T @ Y @ K_sv @ Y @ alpha #corrupted y and alpha
 
     f_train = svm.decision_function(K_train) #using the decision function
     func_margin = y_train * f_train #y_i * f_i #functional margins
-    geom_margin = func_margin/np.sqrt(sq_weighted_norm) #array of per-sample geometric margins
+    cross_k_margin = func_margin/np.sqrt(sq_weighted_norm) #array of per-sample cross kernel margins 
+    return cross_k_margin
 
-    return geom_margin
+
 
 def corrupt_labels(y, corrupt_lvl):
     """
