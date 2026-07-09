@@ -5,6 +5,6 @@ authors:
 - family-names: "Govender"
   given-names: "Saarisha"
   orcid: "https://orcid.org/0000-0002-1065-9517"
-title: "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise"
+title: "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods"
 year: 2025
 repository-code: "https://github.com/saarishag/cross_kernel_margin_nisq"
