@@ -1,5 +1,5 @@
-# The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise
-This repository holds the code for the three independent but connected numerical experiments presented in the paper entitled "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods under Local Depolarising Noise", which can be found at [arXiv.org](https://arxiv.org/pdf/2601.23084)
+# The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods 
+This repository holds the code for the three independent but connected numerical experiments presented in the paper entitled "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods", which can be found at [arXiv.org](https://arxiv.org/pdf/2601.23084)
 
 (previously released on arXiv as
 "Margin-Based Generalisation Bounds for Quantum Kernel Methods under Local Depolarising Noise").
