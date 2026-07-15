@@ -12,7 +12,7 @@ This repository holds the code for the three connected numerical experiments pre
 `local_vs_global.py` - This script explores the test accuracy achieved on a dataset when using the local depolarising noise model compared to the global noise model. This comparison is made possible by first matching the survival probabilities of both models. 
 *(This script can be used to reproduce Figure 10 of the paper.)*
 
-`margin_bounds.py` - This script verifies the stability bounds derived in the paper. It compares the theoretical bound value of the deviation between the inverse squared cross-kernel margin and the corresponding inverse squared ideal margin quantity with the empirical value affected by (local depolarising) noise across multiple datasets.
+`margin_bounds.py` - This script verifies the stability bounds derived in the paper. It computes and compares the theoretical bound values of the deviation between the inverse squared cross-kernel margin and the corresponding inverse squared ideal margin quantity with the empirical values affected by (local depolarising) noise across multiple datasets.
 *(This script can be used to reproduce Figure 11 of the paper.)* 
 
 `ibm_margin_bounds.py` - This script evaluates the stability-bound quantities using kernel matrices obtained from the IBM quantum device and the FakeFez simulator and reproduces the corresponding numerical simulations.
