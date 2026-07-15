@@ -13,7 +13,8 @@ def define_heart_dataset():
     n=2
     n_layers = 1
     embedding = IQPEmbedding #define embedding used for the (Pennylane) quantum circuit
-    p_local_list = [0, 0.05, 0.1, 0.2, 0.3, 0.375, 0.5, 0.6, 0.7, 0.75 ]
+
+    p_local_list = [0, 0.001, 0.0025, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.375]
 
     #fetch heart disease dataset
     heart_disease = fetch_ucirepo(id=45)
@@ -54,7 +55,8 @@ def define_wine_dataset():
     n=2 #can be changed 
     n_layers = 1
     embedding = IQPEmbedding
-    p_local_list = [0, 0.1, 0.2, 0.25, 0.3, 0.35, 0.375, 0.4, 0.45, 0.5, 0.6, 0.75]
+    
+    p_local_list = [0, 0.001, 0.0025, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.375]
 
     #fetch dataset
     wine_quality = fetch_ucirepo(id=186)
@@ -83,8 +85,9 @@ def define_gaussian_dataset():
     n=2 #can be changed 
     n_layers = 1
     embedding = IQPEmbedding
-    p_local_list = [0, 0.05, 0.1, 0.25, 0.375, 0.5, 0.75] #p_values used for C range test
     
+    p_local_list = [0, 0.001, 0.0025, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.375]
+
     def create_gaussians_with_overlap(cluster_stdev = 3.0, n_samples = 500, random_state = 42):
         """Create blobs (gaussians) with controlled overlap
         cluster_stdev = Cluster standard deviation
@@ -108,8 +111,8 @@ def define_BC_dataset(start, stop):
     n_layers = 1
     embedding = IQPEmbedding
 
-    p_local_list = [0, 0.05, 0.1, 0.25, 0.375, 0.5, 0.75] #p_values used for C range test
-        
+    p_local_list = [0, 0.001, 0.0025, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.375]
+
     #fetch dataset
     breast_cancer = fetch_ucirepo(id=17)
 
@@ -135,8 +138,8 @@ def define_HTRU2_dataset():
     n_layers = 1
     embedding = IQPEmbedding
 
-    p_local_list = [0, 0.05, 0.1, 0.25, 0.375, 0.5, 0.75] #p_values used for C range test
-        
+    p_local_list = [0, 0.001, 0.0025, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.375]
+    
     #Load the dataset
     url = "HTRU_2.csv"
     htru2 = pd.read_csv(url, header = None)

@@ -17,65 +17,61 @@ def calc_margin(svm, K_train, y_train):
     margin = 1/sq_weighted_norm
     return np.sqrt(margin)
 
-def calc_C_bounds(p, clean_margin, noisy_margin_est, n, n_layers):
-    """Compute the range of acceptable values for 
-    C to be used in the upper bound """
-    prob_term = (1-p)**(2*n*n_layers)
-    Cmax = (2-prob_term)/(2*(clean_margin**2))
-    Cmin_est = Cmax - (prob_term/(2*(noisy_margin_est**2)))
-    return Cmin_est, Cmax
+def get_full_alpha(svm,y,m): 
+    alpha_full = np.zeros(m)
+    sv = svm.support_ #indices of support vectors
+    alpha_y = svm.dual_coef_[0] #alpha*y
+    alpha_full[sv] = alpha_y / y[sv] #alpha only
+    return alpha_full
 
-def calc_C_min_LB(p, clean_margin, noisy_margin_est, n, n_layers):
-    """Compute the minimum acceptable C value to be used in the lower bound """
-    prob_term = (1-p)**(2*n*n_layers)
-    clean_margin_sq = clean_margin**2
-    noisy_margin_est_sq = noisy_margin_est**2
+def VI_bounds(K_clean, K_noisy, svm_clean, svm_noisy, tau, y):
+    m = len(y)
+    y = np.asarray(y)
 
-    Cmin_est = prob_term/(2*noisy_margin_est_sq)
-    Cmin_est -= 1/(2*clean_margin_sq)
-    return Cmin_est
+    alpha_clean = get_full_alpha(svm_clean, y, m)
+    alpha_noisy = get_full_alpha(svm_noisy, y, m)
 
-def get_upper_params(): 
-    """
-    Define parameters for the upper bound calc
-    Values below obtained using C_region_test.py and 
-    chosen to ensure bound validity for the Heart Dataset
-    """
-    C = 10 
-    C_bound = 10 #Or C_bound = C/m 
-    clean_margin = 0.1674201006091044
-    return C, C_bound, clean_margin
+    Y = np.diag(y)
+    P = np.eye(m) - np.ones((m, m)) / m #define centering matrix 
 
-def get_lower_params():
-    """
-    Define parameters for the lower bound calc
-    Values below obtained using C_min_LB_test.py and 
-    chosen to ensure bound validity for the Heart Dataset
-    """
-    C = 10 
-    C_bound = 2270 #Or C_bound = C*m 
-    clean_margin = 0.17525798616260638
-    return C, C_bound, clean_margin
-    
+    Q_clean = Y @ K_clean @ Y
+    deltaK = K_noisy - K_clean #perturbation -> delta K
 
-def calc_upper_bound(p_local, n, n_layers, clean_margin, C_bound):
-    """
-    Function to compute the upper bound for a given p_local value
-    """
-    prob_term = (1-p_local)**(2*n*n_layers)
-    denominator = (2*(1-(C_bound*(clean_margin**2))))-prob_term
-    sq_bound = (prob_term*(clean_margin**2))/denominator
-    bound = np.sqrt(np.abs(sq_bound))
-    return bound
-         
-def calc_lower_bound(p_local, n, clean_margin, C_bound, n_layers = 1):
-    """
-    Function to compute the lower bound for a given p_local value
-    """
-    clean_margin_sq = clean_margin**2
-    sq_lower_bound = (clean_margin_sq)*(1-p_local)**(2*n*n_layers)
-    sq_lower_bound /= ((2*C_bound*clean_margin_sq) + 1)
-    lower_bound = np.sqrt(sq_lower_bound)
-    return lower_bound
+    #Define z
+    z_clean = Y @ alpha_clean
+    z_noisy = Y @ alpha_noisy
 
+    # || P delta K P z||
+    e_clean = np.linalg.norm(P @ deltaK @ P @ z_clean)
+    e_noisy = np.linalg.norm(P @ deltaK @ P @ z_noisy)
 
+    d_exact = np.linalg.norm(alpha_noisy - alpha_clean) 
+
+    d_VI_clean = e_clean / tau
+    d_VI_noisy = e_noisy / tau
+    d_VI = min(d_VI_clean, d_VI_noisy)
+
+    q0 = alpha_clean @ Q_clean @ alpha_clean
+    q_cross = alpha_noisy @ Q_clean @ alpha_noisy
+    q_diff = abs(q_cross - q0)
+
+    q_factor = np.linalg.norm(Q_clean @ (alpha_clean + alpha_noisy))
+    B_q_VI = q_factor * d_VI
+
+    tol = 1e-10 
+
+    return {
+        "e_clean": e_clean,
+        "e_noisy": e_noisy,
+        "d_exact": d_exact,
+        "d_VI_clean": d_VI_clean,
+        "d_VI_noisy": d_VI_noisy,
+        "d_VI": d_VI,
+        "q0": q0,
+        "q_cross": q_cross,
+        "q_diff": q_diff,
+        "q_factor": q_factor,
+        "B_q_VI": B_q_VI,
+        "VI_holds": d_exact <= d_VI + tol,
+        "q_VI_holds": q_diff <= B_q_VI + tol,
+    }

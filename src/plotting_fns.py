@@ -170,196 +170,103 @@ def plot_local_global(heart_data, wine_2N1L, wine_3N1L,n, n_layers):
 
 
 
-def plot_upper_bound(p_local_list,heart_margin, heart_upper, gaus_margin, gaus_upper, bc_margin, bc_upper, wineL1_margin, wineL1_upper, wineL2_margin, wineL2_upper):
+def plot_perturbation_bound(p_local_list,q_diffs_heart,B_VIs_heart,q_diffs_gaus, B_VIs_gaus, q_diffs_bc, B_VIs_bc, q_diffs_wineL1, B_VIs_wineL1, q_diffs_wineL2, B_VIs_wineL2):
     """
-    Reproduces plots from paper depicting the theoretical margin values
-    computed using the upper bound and the actual noisy margin values 
-    for visual comparison for various datasets
+    Reproduces plots from paper depicting the empirical difference between the cross-kernel and ideal inverse squared-margins
+    with the corresponding theoretical bound values for visual comparison for various datasets
+    All values are assumed to have been scaled by the corresponding ideal inverse squared-margin
     """
     fig, axes = plt.subplots(1,5, figsize=(15,4), sharex=True)
     
-    axes[0].plot(p_local_list, heart_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[0].plot(p_local_list, heart_upper,'o--', linewidth=2, markersize=6, label = "Upper Bound", color = "red")
-    axes[0].set_ylabel("Relative Margin", fontsize=12)
+    axes[0].plot(p_local_list, q_diffs_heart, 's-', linewidth=2, markersize=6, label = 'Empirical', color = "blue")
+    axes[0].plot(p_local_list, B_VIs_heart,'o--', linewidth=2, markersize=6, label = "Bound", color = "red")
+    axes[0].set_ylabel("Relative Inverse Squared-Margin \n Deviation", fontsize=12)
     axes[0].grid(True, linestyle=":", linewidth = 0.5)
     axes[0].tick_params(labelsize=10)
+
     
-    #plot relative deviation
-    rel_dev = heart_upper - heart_margin #already scaled
+    #plot maximum relative deviation
+    rel_dev = B_VIs_heart - q_diffs_heart #already scaled
     max_dev_index = np.argmax(rel_dev)
-    axes[0].vlines(p_local_list[max_dev_index], heart_upper[max_dev_index], heart_margin[max_dev_index] , linestyles = "dotted", label = "Max Relative Deviation")
+    axes[0].vlines(p_local_list[max_dev_index], B_VIs_heart[max_dev_index], q_diffs_heart[max_dev_index] , linestyles = "dotted", label = "Max Relative Deviation")
 
-
-    axes[1].plot(p_local_list, gaus_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[1].plot(p_local_list, gaus_upper,'o--', linewidth=2, markersize=6, label = "Upper Bound", color = "red")
+    #Gaus
+    axes[1].plot(p_local_list, q_diffs_gaus, 's-', linewidth=2, markersize=6, label = '', color = "blue")
+    axes[1].plot(p_local_list, B_VIs_gaus,'o--', linewidth=2, markersize=6, label = "", color = "red")
     axes[1].grid(True, linestyle=":", linewidth = 0.5)
     axes[1].tick_params(labelsize=10)
 
     #plot relative deviation
-    rel_dev = gaus_upper - gaus_margin #already scaled
+    rel_dev = B_VIs_gaus - q_diffs_gaus #already scaled
     max_dev_index = np.argmax(rel_dev)
-    axes[1].vlines(p_local_list[max_dev_index], gaus_upper[max_dev_index], gaus_margin[max_dev_index] , linestyles = "dotted", label = "Max Relative Deviation")
+    axes[1].vlines(p_local_list[max_dev_index], B_VIs_gaus[max_dev_index], q_diffs_gaus[max_dev_index] , linestyles = "dotted")
 
-
-    axes[2].plot(p_local_list, bc_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[2].plot(p_local_list, bc_upper,'o--', linewidth=2, markersize=6, label = "Upper Bound", color = "red")
+    #BC
+    axes[2].plot(p_local_list, q_diffs_bc, 's-', linewidth=2, markersize=6, label = '', color = "blue")
+    axes[2].plot(p_local_list, B_VIs_bc,'o--', linewidth=2, markersize=6, label = "", color = "red")
     axes[2].grid(True, linestyle=":", linewidth = 0.5)
     axes[2].tick_params(labelsize=10)
 
     #plot relative deviation
-    rel_dev = bc_upper - bc_margin #already scaled
+    rel_dev = B_VIs_bc - q_diffs_bc #already scaled
     max_dev_index = np.argmax(rel_dev)
-    axes[2].vlines(p_local_list[max_dev_index], bc_upper[max_dev_index], bc_margin[max_dev_index] , linestyles = "dotted")
+    axes[2].vlines(p_local_list[max_dev_index], B_VIs_bc[max_dev_index], q_diffs_bc[max_dev_index] , linestyles = "dotted")
 
-    axes[3].plot(p_local_list, wineL1_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[3].plot(p_local_list, wineL1_upper,'o--', linewidth=2, markersize=6, label = "Upper Bound", color = "red")
+    #wineL1
+    axes[3].plot(p_local_list, q_diffs_wineL1, 's-', linewidth=2, markersize=6, label = '', color = "blue")
+    axes[3].plot(p_local_list, B_VIs_wineL1,'o--', linewidth=2, markersize=6, label = "", color = "red")
     axes[3].grid(True, linestyle=":", linewidth = 0.5)
     axes[3].tick_params(labelsize=10)
 
     #plot relative deviation
-    rel_dev = wineL1_upper - wineL1_margin #already scaled
+    rel_dev = B_VIs_wineL1 - q_diffs_wineL1 #already scaled
     max_dev_index = np.argmax(rel_dev)
-    axes[3].vlines(p_local_list[max_dev_index], wineL1_upper[max_dev_index], wineL1_margin[max_dev_index] , linestyles = "dotted")
+    axes[3].vlines(p_local_list[max_dev_index], B_VIs_wineL1[max_dev_index], q_diffs_wineL1[max_dev_index] , linestyles = "dotted", label = "Max Relative Deviation")
 
-    axes[4].plot(p_local_list, wineL2_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[4].plot(p_local_list, wineL2_upper,'o--', linewidth=2, markersize=6, label = "Upper Bound", color = "red")
+    #WineL2
+
+    axes[4].plot(p_local_list, q_diffs_wineL2, 's-', linewidth=2, markersize=6, label = '', color = "blue")
+    axes[4].plot(p_local_list, B_VIs_wineL2,'o--', linewidth=2, markersize=6, label = "", color = "red")
     axes[4].grid(True, linestyle=":", linewidth = 0.5)
     axes[4].tick_params(labelsize=10)
 
     #plot relative deviation
-    rel_dev = wineL2_upper - wineL2_margin #already scaled
+    rel_dev = B_VIs_wineL2 - q_diffs_wineL2 #already scaled
     max_dev_index = np.argmax(rel_dev)
-    axes[4].vlines(p_local_list[max_dev_index], wineL2_upper[max_dev_index], wineL2_margin[max_dev_index] , linestyles = "dotted")
+    axes[4].vlines(p_local_list[max_dev_index], B_VIs_wineL2[max_dev_index], q_diffs_wineL2[max_dev_index] , linestyles = "dotted")
 
 
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, bbox_to_anchor = (0.99, 0.1),
-            ncol = 1, fontsize = 11, frameon=True)
-    fig.text(0.5, 0.02, 'Local Depolarising Noise', ha='center', fontsize = 13)
+    fig.legend(handles, labels, bbox_to_anchor = (1, 0.1),
+            ncol = 2, fontsize = 11, frameon=True)
+    fig.text(0.5, 0.02, 'Local Depolarising Noise Probability', ha='center', fontsize = 13)
 
-    axes[0].text(0.5, 0.95, 'Heart Disease', transform = axes[0].transAxes,
-                fontsize=10, verticalalignment='top', 
+    axes[0].text(0.5, 0.05, 'Heart Disease', transform = axes[0].transAxes,
+                fontsize=10, verticalalignment='bottom', 
                 bbox=dict(boxstyle='round', alpha=0.5))
-    axes[1].text(0.65, 0.95, 'Gaussian', transform = axes[1].transAxes,
-                fontsize=10, verticalalignment='top', 
+    axes[1].text(0.65, 0.05, 'Gaussian', transform = axes[1].transAxes,
+                fontsize=10, verticalalignment='bottom', 
                 bbox=dict(boxstyle='round', alpha=0.5))
-    axes[2].text(0.5, 0.95, 'Breast Cancer', transform = axes[2].transAxes,
-                fontsize=10, verticalalignment='top', 
+    axes[2].text(0.5, 0.05, 'Breast Cancer', transform = axes[2].transAxes,
+                fontsize=10, verticalalignment='bottom', 
                 bbox=dict(boxstyle='round', alpha=0.5))
-    axes[3].text(0.4, 0.95, 'Wine (N=2,L=1)', transform = axes[3].transAxes,
-                fontsize=10, verticalalignment='top', 
+    axes[3].text(0.43, 0.05, 'Wine (N=2,L=1)', transform = axes[3].transAxes,
+                fontsize=10, verticalalignment='bottom', 
                 bbox=dict(boxstyle='round', alpha=0.5))
-    axes[4].text(0.4, 0.95, 'Wine (N=2, L=2)', transform = axes[4].transAxes,
-                fontsize=10, verticalalignment='top', 
-                bbox=dict(boxstyle='round', alpha=0.5))
-
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.15) 
-    plt.show()
-
-
-def plot_lower_bound(p_local_list,heart_margin, heart_lower, gaus_margin, gaus_lower, bc_margin, bc_lower, wineL1_margin, wineL1_lower, wineL2_margin, wineL2_lower):
-    """
-    Reproduces plots from paper depicting the theoretical margin values
-    computed using the lower bound and the actual noisy margin values 
-    for visual comparison for various datasets
-    """
-    fig, axes = plt.subplots(1,5, figsize=(15,4), sharex=True)
-    print(axes.shape)
-    axes[0].plot(p_local_list, heart_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[0].plot(p_local_list, heart_lower,'o--', linewidth=2, markersize=6, label = "Lower Bound", color = "black")
-    axes[0].set_ylabel("Relative Margin", fontsize=12)
-    axes[0].grid(True, linestyle=":", linewidth = 0.5)
-    axes[0].tick_params(labelsize=10)
-
-    #plot relative deviation
-    rel_dev = heart_margin - heart_lower #already scaled
-    max_dev_index = np.argmax(rel_dev)
-    axes[0].vlines(p_local_list[max_dev_index], heart_lower[max_dev_index], heart_margin[max_dev_index] , linestyles = "dotted", label = "Max Relative Deviation")
-
-
-    axes[1].plot(p_local_list, gaus_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[1].plot(p_local_list, gaus_lower,'o--', linewidth=2, markersize=6, label = "Lower Bound", color = "black")
-    axes[1].grid(True, linestyle=":", linewidth = 0.5)
-    axes[1].tick_params(labelsize=10)
-
-    #plot relative deviation
-    rel_dev = gaus_margin - gaus_lower #already scaled
-    max_dev_index = np.argmax(rel_dev)
-    axes[1].vlines(p_local_list[max_dev_index], gaus_lower[max_dev_index], gaus_margin[max_dev_index] , linestyles = "dotted")
-
-    axes[2].plot(p_local_list, bc_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[2].plot(p_local_list, bc_lower,'o--', linewidth=2, markersize=6, label = "Lower Bound", color = "black")
-    axes[2].grid(True, linestyle=":", linewidth = 0.5)
-    axes[2].tick_params(labelsize=10)
-
-    #plot relative deviation
-    rel_dev = bc_margin - bc_lower #already scaled
-    max_dev_index = np.argmax(rel_dev)
-    axes[2].vlines(p_local_list[max_dev_index], bc_lower[max_dev_index], bc_margin[max_dev_index] , linestyles = "dotted")
-
-    axes[3].plot(p_local_list, wineL1_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[3].plot(p_local_list, wineL1_lower,'o--', linewidth=2, markersize=6, label = "Lower Bound", color = "black")
-    axes[3].grid(True, linestyle=":", linewidth = 0.5)
-    axes[3].tick_params(labelsize=10)
-
-    #plot relative deviation
-    rel_dev = wineL1_margin - wineL1_lower #already scaled
-    max_dev_index = np.argmax(rel_dev)
-    axes[3].vlines(p_local_list[max_dev_index], wineL1_lower[max_dev_index], wineL1_margin[max_dev_index] , linestyles = "dotted")
-
-    axes[4].plot(p_local_list, wineL2_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[4].plot(p_local_list, wineL2_lower,'o--', linewidth=2, markersize=6, label = "Lower Bound", color = "black")
-    axes[4].grid(True, linestyle=":", linewidth = 0.5)
-    axes[4].tick_params(labelsize=10)
-
-    #plot relative deviation
-    rel_dev = wineL2_margin - wineL2_lower #already scaled
-    max_dev_index = np.argmax(rel_dev)
-
-    axes[4].vlines(p_local_list[max_dev_index], wineL2_lower[max_dev_index], wineL2_margin[max_dev_index] , linestyles = "dotted")
-
-
-    handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, bbox_to_anchor = (0.99, 0.1),
-            ncol = 1, fontsize = 11, frameon=True)
-    fig.text(0.5, 0.02, 'Local Depolarising Noise', ha='center', fontsize = 13)
-
-    axes[0].text(0.5, 0.95, 'Heart Disease', transform = axes[0].transAxes,
-                fontsize=10, verticalalignment='top', 
-                bbox=dict(boxstyle='round', alpha=0.5))
-    axes[1].text(0.65, 0.95, 'Gaussian', transform = axes[1].transAxes,
-                fontsize=10, verticalalignment='top', 
-                bbox=dict(boxstyle='round', alpha=0.5))
-    axes[2].text(0.5, 0.95, 'Breast Cancer', transform = axes[2].transAxes,
-                fontsize=10, verticalalignment='top', 
-                bbox=dict(boxstyle='round', alpha=0.5))
-    axes[3].text(0.4, 0.95, 'Wine (N=2,L=1)', transform = axes[3].transAxes,
-                fontsize=10, verticalalignment='top', 
-                bbox=dict(boxstyle='round', alpha=0.5))
-    axes[4].text(0.4, 0.95, 'Wine (N=2, L=2)', transform = axes[4].transAxes,
-                fontsize=10, verticalalignment='top', 
+    axes[4].text(0.43, 0.05, 'Wine (N=2, L=2)', transform = axes[4].transAxes,
+                fontsize=10, verticalalignment='bottom', 
                 bbox=dict(boxstyle='round', alpha=0.5))
 
     plt.tight_layout()
     plt.subplots_adjust(bottom=0.15)
-    plt.show()
 
-
-def plot_comparison_plot(p_local_list, heart_margin, heart_upper, heart_lower):
-    """
-    Reproduces plot from the paper depicting the upper and lower bounds for
-    the Heart Disease dataset on one figure
-    """
-    plt.plot(p_local_list, heart_upper,'o--', linewidth=2, markersize=6, label = "Upper Bound", color = "red")
-    plt.plot(p_local_list, heart_margin, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    plt.plot(p_local_list, heart_lower,'o--', linewidth=2, markersize=6, label = "Lower Bound", color = "black")
-
-    plt.xlabel("Local Depolarising Noise Probability", fontsize = 12)
-    plt.ylabel("Relative Margin", fontsize=12)
-    plt.grid(True, linestyle=":", linewidth = 0.5)
-    plt.tick_params(labelsize=10)
-    plt.legend()
+    #Set vertical log scale
+    axes[0].set_yscale('log')
+    axes[1].set_yscale('log')
+    axes[2].set_yscale('log')
+    axes[3].set_yscale('log')
+    axes[4].set_yscale('log')
+     
     plt.show()
 
 def plot_boxplots(htru2_df, wine_df, heart_df, gaus_df):
@@ -574,69 +481,83 @@ def acc_margin_plot(htru2_acc, htru2_med_margins, wine_acc, wine_med_margins, he
     plt.show()
 
 
-def ibm_plots(p_local_list, margin_bc220, upper_bound_bc220, lower_bound_bc220, fake_margin_bc220, IBM_margin_bc220,margin_bc45, upper_bound_bc45, lower_bound_bc45, fake_margin_bc45, IBM_margin_bc45,margin_gaus, upper_bound_gaus, lower_bound_gaus, fake_margin_gaus, IBM_margin_gaus):
+def ibm_plots(p_local_list,q_diffs_bc220,B_VIs_bc220,q_diffs_gaus, B_VIs_gaus, q_diffs_bc45, B_VIs_bc45):
+    """    
+    Reproduces plots from paper depicting the empirical difference between the cross-kernel and ideal inverse squared-margins
+    with the corresponding theoretical bound values for visual comparison for the datasets used for the IBM hardware experiments
+
+    All values are assumed to have been scaled by the corresponding inverse squared ideal margin
+
+    The first two values are excluded as the first and second entries are assumed to be the results from ibm_fez and FakeFez, respectively
+    (These values are reported separately in a table)
     """
-    Reproduces plots from paper depicting the upper and lower bound values
-    with the simulated noisy margin for increasing noise values for comparison
-    with the noisy margin value obtained using real quantum hardware
-    """
+
     fig, axes = plt.subplots(1,3, figsize=(12,4), sharex=False)
     print(axes.shape)
 
     #BC (200-220)
-    axes[0].plot(p_local_list, margin_bc220, 's-', linewidth=2, markersize=6, color = "blue")
-    axes[0].plot(p_local_list, upper_bound_bc220,'o--', linewidth=2, markersize=6,  color = "red")
-    axes[0].plot(p_local_list, lower_bound_bc220,'o--', linewidth=2, markersize=6,  color = "black")
-
-    axes[0].axhline(y=IBM_margin_bc220,color = 'magenta', linestyle = ":")
-    axes[0].axhline(y=fake_margin_bc220,color = 'green',linestyle = "-.")
-
-    axes[0].set_ylabel("Relative Margin", fontsize=12)
+    axes[0].plot(p_local_list, q_diffs_bc220[2:], 's-', linewidth=2, markersize=6, color = "blue")
+    axes[0].plot(p_local_list, B_VIs_bc220[2:],'o--', linewidth=2, markersize=6,  color = "red")
+    
+    axes[0].set_ylabel("Relative Inverse Squared-Margin \n Deviation", fontsize=12)
     axes[0].grid(True, linestyle=":", linewidth = 0.5)
     axes[0].tick_params(labelsize=10)
 
-    axes[0].text(0.45, 0.95, 'Breast Cancer (200-220)', transform = axes[0].transAxes,
-                fontsize=10, verticalalignment='top', 
+    axes[0].text(0.43, 0.03, 'Breast Cancer (200-220)', transform = axes[0].transAxes,
+                fontsize=10, verticalalignment='bottom', 
                 bbox=dict(boxstyle='round', alpha=0.5))
 
-    #BC (0-45)
-    axes[1].plot(p_local_list, margin_bc45, 's-', linewidth=2, markersize=6, label = 'Empirical Margin', color = "blue")
-    axes[1].plot(p_local_list, upper_bound_bc45,'o--', linewidth=2, markersize=6, label = "Upper Bound", color = "red")
-    axes[1].plot(p_local_list, lower_bound_bc45,'o--', linewidth=2, markersize=6, label = "Lower Bound", color = "black")
+    #plot maximum relative deviation
+    rel_dev = B_VIs_bc220[2:] - q_diffs_bc220[2:] #already scaled
+    max_dev_index = np.argmax(rel_dev)
+    axes[0].vlines(p_local_list[max_dev_index], B_VIs_bc220[2:][max_dev_index], q_diffs_bc220[2:][max_dev_index] , linestyles = "dotted")
 
+
+    #BC (0-45)
+    axes[1].plot(p_local_list, q_diffs_bc45[2:], 's-', linewidth=2, markersize=6, label = 'Empirical', color = "blue")
+    axes[1].plot(p_local_list, B_VIs_bc45[2:],'o--', linewidth=2, markersize=6, label = "Bound", color = "red")
     
-    axes[1].axhline(y=IBM_margin_bc45,color = 'magenta',label = 'ibm_fez', linestyle = ":")
-    axes[1].axhline(y=fake_margin_bc45,color = 'green',label = 'FakeFez',linestyle = "-.")
 
     axes[1].grid(True, linestyle=":", linewidth = 0.5)
     axes[1].tick_params(labelsize=10)
 
-    axes[1].text(0.53, 0.95, 'Breast Cancer (0-45)', transform = axes[1].transAxes,
-                fontsize=10, verticalalignment='top', 
+    axes[1].text(0.5, 0.03, 'Breast Cancer (0-45)', transform = axes[1].transAxes,
+                fontsize=10, verticalalignment='bottom', 
                 bbox=dict(boxstyle='round', alpha=0.5))
 
+    rel_dev = B_VIs_bc45[2:] - q_diffs_bc45[2:] #already scaled
+    max_dev_index = np.argmax(rel_dev)
+    axes[1].vlines(p_local_list[max_dev_index], B_VIs_bc45[2:][max_dev_index], q_diffs_bc45[2:][max_dev_index] , linestyles = "dotted", label = "Max Relative Deviation")
+
+
     #Gaus  
-    axes[2].plot(p_local_list, margin_gaus, 's-', linewidth=2, markersize=6, color = "blue")
-    axes[2].plot(p_local_list, upper_bound_gaus,'o--', linewidth=2, markersize=6,  color = "red")
-    axes[2].plot(p_local_list, lower_bound_gaus,'o--', linewidth=2, markersize=6,  color = "black")
-
-    axes[2].axhline(y=IBM_margin_gaus,color = 'magenta', linestyle = ":")
-    axes[2].axhline(y=fake_margin_gaus,color = 'green',linestyle = "-.")
-
+    axes[2].plot(p_local_list, q_diffs_gaus[2:], 's-', linewidth=2, markersize=6, color = "blue")
+    axes[2].plot(p_local_list, B_VIs_gaus[2:],'o--', linewidth=2, markersize=6,  color = "red")
+    
     axes[2].grid(True, linestyle=":", linewidth = 0.5)
     axes[2].tick_params(labelsize=10)
 
-    axes[2].text(0.75, 0.55, 'Gaussian', transform = axes[2].transAxes,
-                fontsize=10, verticalalignment='top', 
+    axes[2].text(0.77, 0.03, 'Gaussian', transform = axes[2].transAxes,
+                fontsize=10, verticalalignment='bottom', 
                 bbox=dict(boxstyle='round', alpha=0.5))
+    
 
+    rel_dev = B_VIs_gaus[2:] - q_diffs_gaus[2:] #already scaled
+    max_dev_index = np.argmax(rel_dev)
+    axes[2].vlines(p_local_list[max_dev_index], B_VIs_gaus[2:][max_dev_index], q_diffs_gaus[2:][max_dev_index] , linestyles = "dotted")
+
+    #Set vertical log scale
+    axes[0].set_yscale('log')
+    axes[1].set_yscale('log')
+    axes[2].set_yscale('log')
+    
     
     handles1, labels1 = axes[0].get_legend_handles_labels()
     handles2, labels2 = axes[1].get_legend_handles_labels()
     handles3, labels3 = axes[2].get_legend_handles_labels()
 
-    fig.legend(handles1+handles2+handles3, labels1+labels2+labels3, bbox_to_anchor = (0.989, 0.97),
-            ncol = 1, fontsize = 11, frameon
+    fig.legend(handles1+handles2+handles3, labels1+labels2+labels3, bbox_to_anchor = (0.989, 0.1),
+            ncol = 2, fontsize = 11, frameon
             =True)
 
     fig.text(0.5, 0.02, 'Local Depolarising Noise Probability', ha='center', fontsize = 13)
