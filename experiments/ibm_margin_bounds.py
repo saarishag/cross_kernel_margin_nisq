@@ -20,7 +20,7 @@ from ibm_bounds_definitions import create_iqp_feature_map, create_training_overl
 from src.dataset_config import define_BC_dataset, define_gaussian_dataset
 from src.kernel_definitions import clean_rho_fn, get_clean_matrix, local_rho_fn, get_local_matrix
 from src.bounds_definitions import get_full_alpha, VI_bounds
-from results.results import ideal_kernels_IBM, IBM_perturbation_results
+from results.results import ideal_kernels_IBM, IBM_bound_results
 from src.plotting_fns import ibm_plots
 
 np.random.seed(42)
@@ -112,7 +112,7 @@ clean_rho = clean_rho_fn(n=n, n_layers=n_layers, embedding=IQPEmbedding)
 clean_K = get_clean_matrix(A = X_train, B = X_train, fn_clean_rho = clean_rho)
 clean_K = 0.5 * (clean_K + clean_K.T) #symmetrise
 
-#apply perturbation bound code
+#apply stability bound code
 
 C = 1
 tau = 0.1
@@ -166,11 +166,11 @@ for p_local in p_local_list:
 
 
 #Save results to text file
-filename = "IBM_PertBounds.txt"
+filename = "IBM_BC_Bounds.txt"
 
 with open(filename, 'a') as file:
     file.write(f"Breast Cancer Dataset\n")
-    file.write(f"Perturbation Bound Results: \n")
+    file.write(f"Stability Bound Results: \n")
     file.write(f"m = {num_samples}\n")
     for i in range(len(results)):
         for k in results[i].keys():
@@ -192,7 +192,7 @@ clean_K_bc220, clean_K_bc45, clean_K_gaus = ideal_kernels_IBM()
 """
 #Uncomment the following code to reproduce the figures from the manuscript
 
-p_local_list,q_diffs_bc220,B_VIs_bc220,q_diffs_gaus, B_VIs_gaus, q_diffs_bc45, B_VIs_bc45 = IBM_perturbation_results()
+p_local_list,q_diffs_bc220,B_VIs_bc220,q_diffs_gaus, B_VIs_gaus, q_diffs_bc45, B_VIs_bc45 = IBM_bound_results()
 ibm_plots(p_local_list,q_diffs_bc220,B_VIs_bc220,q_diffs_gaus, B_VIs_gaus, q_diffs_bc45, B_VIs_bc45)
 
 """

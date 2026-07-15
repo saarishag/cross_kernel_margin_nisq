@@ -170,7 +170,7 @@ def plot_local_global(heart_data, wine_2N1L, wine_3N1L,n, n_layers):
 
 
 
-def plot_perturbation_bound(p_local_list,q_diffs_heart,B_VIs_heart,q_diffs_gaus, B_VIs_gaus, q_diffs_bc, B_VIs_bc, q_diffs_wineL1, B_VIs_wineL1, q_diffs_wineL2, B_VIs_wineL2):
+def plot_stability_bound(p_local_list,q_diffs_heart,B_VIs_heart,q_diffs_gaus, B_VIs_gaus, q_diffs_bc, B_VIs_bc, q_diffs_wineL1, B_VIs_wineL1, q_diffs_wineL2, B_VIs_wineL2):
     """
     Reproduces plots from paper depicting the empirical difference between the cross-kernel and ideal inverse squared-margins
     with the corresponding theoretical bound values for visual comparison for various datasets

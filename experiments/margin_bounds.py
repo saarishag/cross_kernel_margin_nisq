@@ -10,8 +10,8 @@ from sklearn.pipeline import make_pipeline
 from src.kernel_definitions import clean_rho_fn, get_clean_matrix, local_rho_fn, get_local_matrix
 from src.dataset_config import define_wine_dataset, define_heart_dataset, define_BC_dataset, define_gaussian_dataset
 from src.bounds_definitions import get_full_alpha, VI_bounds 
-from results.results import perturbation_results
-from src.plotting_fns import plot_perturbation_bound
+from results.results import stability_bound_results
+from src.plotting_fns import plot_stability_bound
 np.random.seed(42)
 
 X_subset, y_subset, n, n_layers, embedding, p_local_list = define_heart_dataset() #Example usage - Heart Disease Dataset
@@ -46,7 +46,7 @@ clean_K = get_clean_matrix(A = X_train, B = X_train, fn_clean_rho = clean_rho)
 clean_K = 0.5 * (clean_K + clean_K.T) #symmetrise
     
 """
-Perturbation Bounds
+Stability Bounds
 """
 
 C = 1
@@ -84,10 +84,10 @@ for p_local in p_local_list:
     results.append(result)
 
 #Save results to text file
-filename = "Heart_PertBounds.txt"
+filename = "Heart_Bounds.txt"
 
 with open(filename, 'a') as file:
-    file.write(f"Perturbation Bound Results: \n")
+    file.write(f"Stability Bound Results: \n")
     file.write(f"m = {num_samples}\n")
     for i in range(len(results)):
         for k in results[i].keys():
@@ -101,7 +101,7 @@ with open(filename, 'r') as file: #read
 """
 #Uncomment to duplicate plots from the paper 
  
-p_local_list,q_diffs_heart,B_VIs_heart,q_diffs_gaus, B_VIs_gaus, q_diffs_bc, B_VIs_bc, q_diffs_wineL1, B_VIs_wineL1, q_diffs_wineL2, B_VIs_wineL2 = perturbation_results()
-plot_perturbation_bound(p_local_list,q_diffs_heart,B_VIs_heart,q_diffs_gaus, B_VIs_gaus, q_diffs_bc, B_VIs_bc, q_diffs_wineL1, B_VIs_wineL1, q_diffs_wineL2, B_VIs_wineL2)
+p_local_list,q_diffs_heart,B_VIs_heart,q_diffs_gaus, B_VIs_gaus, q_diffs_bc, B_VIs_bc, q_diffs_wineL1, B_VIs_wineL1, q_diffs_wineL2, B_VIs_wineL2 = stability_bound_results()
+plot_stability_bound(p_local_list,q_diffs_heart,B_VIs_heart,q_diffs_gaus, B_VIs_gaus, q_diffs_bc, B_VIs_bc, q_diffs_wineL1, B_VIs_wineL1, q_diffs_wineL2, B_VIs_wineL2)
 
 """

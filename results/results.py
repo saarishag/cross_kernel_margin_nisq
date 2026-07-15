@@ -58,7 +58,7 @@ def local_global_results():
     return heart_data, wine_2N1L, wine_3N1L
 
 
-def perturbation_results():
+def stability_bound_results():
     """   
     Results from VI_bounds obtained for various datasets at increasing levels of local depolarising noise
     where the exact and bound inverse squared margin values are scaled by the ideal inverse squared-margin
@@ -179,7 +179,7 @@ def perturbation_results():
 
     return p_local_list,q_diffs_heart,B_VIs_heart,q_diffs_gaus, B_VIs_gaus, q_diffs_bc, B_VIs_bc, q_diffs_wineL1, B_VIs_wineL1, q_diffs_wineL2, B_VIs_wineL2
 
-def IBM_perturbation_results():
+def IBM_bound_results():
     """   
     Results from VI_bounds obtained for the datasets used for the hardware experiments at increasing levels of local depolarising noise
     where the exact and bound inverse squared margin values are scaled by the ideal inverse squared-margin

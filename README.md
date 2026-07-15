@@ -1,5 +1,5 @@
 # The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods 
-This repository holds the code for the three independent but connected numerical experiments presented in the paper entitled "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods", which can be found at [arXiv.org](https://arxiv.org/pdf/2601.23084)
+This repository holds the code for the three connected numerical experiments presented in the paper entitled "The Cross-Kernel Margin: A Robustness Measure for Quantum Kernel Methods", which can be found at [arXiv.org](https://arxiv.org/pdf/2601.23084)
 
 (previously released on arXiv as
 "Margin-Based Generalisation Bounds for Quantum Kernel Methods under Local Depolarising Noise").
@@ -12,22 +12,18 @@ This repository holds the code for the three independent but connected numerical
 `local_vs_global.py` - This script explores the test accuracy achieved on a dataset when using the local depolarising noise model compared to the global noise model. This comparison is made possible by first matching the survival probabilities of both models. 
 *(This script can be used to reproduce Figure 10 of the paper.)*
 
-`margin_bounds.py` - This script verifies the upper and lower margin bounds derived in the paper. It compares the theoretical bound value of the margin affected by (local depolarising) noise with the _cross-kernel margin_, which is a margin-based robustness measure introduced in the paper.
-*(This script can be used to reproduce Figures 11 and 12 of the paper.)* 
+`margin_bounds.py` - This script verifies the stability bounds derived in the paper. It compares the theoretical bound value of the deviation between the inverse squared cross-kernel margin and the corresponding inverse squared ideal margin quantity with the empirical value affected by (local depolarising) noise across multiple datasets.
+*(This script can be used to reproduce Figure 11 of the paper.)* 
 
-`C_region_test.py` - This script determines a feasible range of acceptable values for the regularisation parameter that must be used in `margin_bounds.py` for valid upper bounds.
-
-`C_min_LB_test.py` - This script determines the acceptable minimum value for the regularisation parameter that must be used in `margin_bounds.py` for valid lower bounds.
-
-`ibm_margin_bounds.py` - This script verifies the margin bounds on real quantum hardware.
-*(This script can be used to reproduce Figure 14 of the paper.)*
+`ibm_margin_bounds.py` - This script evaluates the stability-bound quantities using kernel matrices obtained from the IBM quantum device and the FakeFez simulator and reproduces the corresponding numerical simulations.
+*(This script can be used to reproduce Figure 12 and Table 1 of the paper.)*
 
 ### 2. _src_ Folder
 `dataset_config.py`- This script contains code to fetch and preprocess the datasets used in the paper, and prepare them for use for the binary classification problem.
 
 `kernel_definitions.py`- This script contains all functions necessary to obtain the kernel matrix using a quantum circuit with PennyLane when using the noiseless (ideal), local and global depolarising noise settings.
 
-`bounds_definitions.py`- This script entails the functions necessary to compute the upper and lower bounds of the respective noisy margin value.
+`bounds_definitions.py`- This script entails the functions necessary to compute the stability bounds using the ideal and cross-kernel inverse squared-margins.
 
 `gen_margin_definitions.py`-This script defines the necessary functions in order to run `margin_generalisation_link.py`. 
 
@@ -62,21 +58,23 @@ The following dependencies must be installed to run these scripts:
   - matplotlib
   - seaborn
   - qiskit
+  - qiskit-aer
+  - qiskit-ibm-runtime
   - PennyLane
   - scipy
 - An IBM Quantum Account must be created to run the `ibm_*` scripts
 
 ## Running the Code
-The three independent simulations with their related code scripts include:
+The three connected simulations with their related code scripts include:
 - exploring the link between margins and generalisation using corrupted labels
   - `gen_margin_definitions.py`
   - `margin_generalisation_link.py` 
 - comparing local and global depolarising noise using test accuracy
   - `kernel_definitions.py`
   - `local_vs_global.py`
-- verifying the upper and lower margin bounds
+- verifying the stability bounds
   - `kernel_definitions.py`, `bounds_definitions.py`, `ibm_bounds_definitions.py`
-  - `C_region_test.py`, `C_min_LB_test.py`, `margin_bounds.py`, `ibm_margin_bounds.py`
+  - `margin_bounds.py`, `ibm_margin_bounds.py`
 ### Steps:
 1. Clone this repository
 2. Install the dependencies
