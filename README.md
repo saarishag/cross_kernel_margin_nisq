@@ -83,5 +83,5 @@ The three connected simulations with their related code scripts include:
    - Note: The scripts in the _src_ and _results_ folders are supporting scripts and must not be run alone
   
 ## Acknowledgements
-This research was supported by the National Research Foundation (NRF) of South Africa. The authors would like to acknowledge the National Institute for Theoretical and Computational Sciences (NITheCS). We thank the University of KwaZulu-Natal (UKZN) for the use of the HEP1 machine. We acknowledge the South African Quantum Technology Initiative (SA QuTI) and IBM Quantum services for this work. The views expressed are those of the authors, and do not reflect the official policy or position of IBM or the IBM Quantum team.
+This research was supported by the National Research Foundation (NRF) of South Africa. The authors would like to acknowledge the National Institute for Theoretical and Computational Sciences (NITheCS). We thank the University of KwaZulu-Natal (UKZN) for the use of the hep1 machine. We acknowledge the South African Quantum Technology Initiative (SA QuTI), the Centre for High Performance Computing (CHPC), and IBM Quantum services for this work. The views expressed are those of the authors, and do not reflect the official policy or position of IBM or the IBM Quantum team.
 
